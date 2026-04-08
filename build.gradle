@@ -23,6 +23,9 @@ ext {
 }
 
 dependencies {
+    // XML 응답 파싱용 (공공데이터 API가 XML로 응답함)
+    implementation 'tools.jackson.dataformat:jackson-dataformat-xml:3.1.1'
+
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-webmvc'
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
