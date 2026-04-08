@@ -1,5 +1,6 @@
 package com.aptmap.entity;
 
+import com.aptmap.aparttrade.model.AptItem;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -96,4 +97,34 @@ public class AptTrade {
     @CreatedDate
     @Column(name = "created_at", updatable = false) // 최초 저장 시간, 수정 불가
     private LocalDateTime createdAt;
+
+    // AptItem(API 응답) → AptTrade(엔티티) 변환 생성자
+    public AptTrade(AptItem item) {
+        this.aptDong = item.getAptDong();
+        this.aptNm = item.getAptNm();
+        this.buildYear = item.getBuildYear();
+        this.buyerGbn = item.getBuyerGbn();
+        this.cdealDay = item.getCdealDay();
+        this.cdealType = item.getCdealType();
+        // 12,000 → 쉼표 제거 후 Long으로 변환
+        this.dealAmount = Long.parseLong(item.getDealAmount().replaceAll(",", "").trim());
+        // 년, 월, 일 따로 오는 걸 하나의 날짜로 합치기
+        this.dealDate = LocalDate.of(
+                Integer.parseInt(item.getDealYear().trim()),
+                Integer.parseInt(item.getDealMonth().trim()),
+                Integer.parseInt(item.getDealDay().trim())
+        );
+        this.dealingGbn = item.getDealingGbn();
+        this.estateAgentSggNm = item.getEstateAgentSggNm();
+        this.excluUseAr = new BigDecimal(item.getExcluUseAr().trim());
+        this.floor = item.getFloor() != null && !item.getFloor().trim().isEmpty()
+                ? Integer.parseInt(item.getFloor().trim()) : null;
+        this.jibun = item.getJibun();
+        this.landLeaseholdGbn = item.getLandLeaseholdGbn();
+        this.rgstDate = item.getRgstDate();
+        this.roadNm = item.getRoadNm();
+        this.sggCd = item.getSggCd();
+        this.slerGbn = item.getSlerGbn();
+        this.umdNm = item.getUmdNm();
+    }
 }
