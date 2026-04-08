@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/aptmap
+    username: # DB 아이디
+    password: # DB 비밀번호
+
+constants:
+  open-feign:
+    apt-trade:
+      service-key: # 공공데이터 API 키
+  kakao:
+    rest-api-key: # 카카오 REST API 키
