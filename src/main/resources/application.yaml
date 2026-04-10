@@ -19,8 +19,8 @@ constants:
   open-feign:
     apt-trade:
       # 공공데이터포털 아파트 실거래가 API
-      url: http://apis.data.go.kr/1613000/RTMSDataSvcAptTradeDev
-      service-key: uJ20yFp/Nc+Rne5q65wN1jyBi+qvK2BhwwkSeQi9H+4W1x90aTndwzD5hUwKF5oxd/6Qjt0tqoTfPRTNT/UYCA==
+      url: http://apis.data.go.kr/1613000
+      service-key: uJ20yFp%2FNc%2BRne5q65wN1jyBi%2BqvK2BhwwkSeQi9H%2B4W1x90aTndwzD5hUwKF5oxd%2F6Qjt0tqoTfPRTNT%2FUYCA%3D%3D
   kakao:
     # 카카오 REST API 키
     rest-api-key: 1488b1c4cd978f510775163b5aeb1f29

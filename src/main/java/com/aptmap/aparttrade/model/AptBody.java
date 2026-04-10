@@ -12,8 +12,8 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AptBody {
 
-    // <items> 태그 없이 <item>이 바로 나열되는 구조라 useWrapping = false
-    @JacksonXmlElementWrapper(useWrapping = false)
+    // <items> 태그로 감싸진 구조일 경우
+    @JacksonXmlElementWrapper(localName = "items")
     @JacksonXmlProperty(localName = "item")
     private List<AptItem> items; // 아파트 거래 목록
 }
