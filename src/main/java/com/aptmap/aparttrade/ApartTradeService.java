@@ -9,8 +9,8 @@ import com.aptmap.kakao.KakaoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import java.net.URI;
 
+import java.net.URI;
 import java.util.List;
 
 @Slf4j
@@ -37,10 +37,18 @@ public class ApartTradeService {
 
         if (response.getBody().getItems().size() > 0) {
             for (AptItem item : response.getBody().getItems()) {
+                // 주소 조합 후 좌표 변환해서 저장
                 AptTrade aptTrade = new AptTrade(item);
+                String address = item.getUmdNm() + " " + item.getJibun();  // 읍면동 + 지번
+                double[] coord = kakaoService.getCoordinate(address);
+                if (coord != null) {
+                    aptTrade.setLatitude(coord[0]);
+                    aptTrade.setLongitude(coord[1]);
+                }
                 try {
-                    apartTradeRepository.save(aptTrade);
+                    apartTradeRepository.save(aptTrade);  // <- 한 번만
                 } catch (Exception e) {
+                    // 중복 거래 무시 (UniqueConstraint 위반)
                 }
             }
         }
