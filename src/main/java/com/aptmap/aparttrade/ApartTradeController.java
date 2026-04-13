@@ -54,4 +54,23 @@ public class ApartTradeController {
                 .map(AptTradeMapItem::new)
                 .collect(Collectors.toList());
     }
+
+    // 아파트 이름 + 거래년월로 DB 전체 검색
+    @GetMapping("/search")
+    public List<AptTradeMapItem> searchByAptNm(
+            @RequestParam String aptNm,
+            @RequestParam String dealYearMon
+    ) {
+        // "202503" → 2025년 3월 1일 ~ 3월 31일
+        int year  = Integer.parseInt(dealYearMon.substring(0, 4));
+        int month = Integer.parseInt(dealYearMon.substring(4, 6));
+        LocalDate from = LocalDate.of(year, month, 1);
+        LocalDate to   = from.withDayOfMonth(from.lengthOfMonth());
+
+        return apartTradeRepository
+                .searchByAptNm(aptNm, from, to)
+                .stream()
+                .map(AptTradeMapItem::new)
+                .collect(Collectors.toList());
+    }
 }

@@ -16,4 +16,13 @@ public interface ApartTradeRepository extends JpaRepository<AptTrade, Long> {
     List<AptTrade> findMapData(@Param("sggCd") String sggCd,
                                @Param("from") LocalDate from,
                                @Param("to") LocalDate to);
+
+    // 아파트 이름 + 거래 날짜 범위로 검색
+    // LIKE %:aptNm% → 부분 일치 검색
+    @Query("SELECT a FROM AptTrade a WHERE a.aptNm LIKE %:aptNm% " +
+            "AND a.dealDate BETWEEN :from AND :to " +
+            "AND a.latitude IS NOT NULL AND a.longitude IS NOT NULL")
+    List<AptTrade> searchByAptNm(@Param("aptNm") String aptNm,
+                                 @Param("from") LocalDate from,
+                                 @Param("to") LocalDate to);
 }
