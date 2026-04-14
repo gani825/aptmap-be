@@ -31,46 +31,59 @@ public class ApartTradeController {
 
     // DB에 저장된 데이터를 지도용 DTO로 변환해서 반환
     // 좌표(위도/경도)가 있는 데이터만 포함됨
-    // lawdCd  : 법정동 코드 5자리 (예: 11680 = 강남구)
-    // dealYearMon : 거래년월 6자리 (예: 202503)
+    // lawdCd : 법정동 코드 5자리 (예: 11680 = 강남구)
+    // from : 시작 거래년월 6자리
+    // to : 종료 거래년월 6자리
     @GetMapping("/map")
     public List<AptTradeMapItem> getMapMarkers(
             @RequestParam String lawdCd,
-            @RequestParam String dealYearMon
+            @RequestParam String from,
+            @RequestParam String to
     ) {
-        log.info("지도 마커 요청 - 지역: {}, 거래월: {}", lawdCd, dealYearMon);
+        log.info("지도 마커 요청 - 지역: {}, 기간: {} ~ {}", lawdCd, from, to);
 
-        // "202503" → 2025년 3월 1일 ~ 3월 31일로 범위 계산
-        int year  = Integer.parseInt(dealYearMon.substring(0, 4));
-        int month = Integer.parseInt(dealYearMon.substring(4, 6));
-        LocalDate from = LocalDate.of(year, month, 1);
-        LocalDate to   = from.withDayOfMonth(from.lengthOfMonth());
+        // "202501" → 2025년 1월 1일, "202503" → 2025년 3월 31일
+        LocalDate fromDate = parseYearMonToFirstDay(from);
+        LocalDate toDate   = parseYearMonToLastDay(to);
 
         return apartTradeRepository
-                .findMapData(
-                        lawdCd, from, to
-                )
+                .findMapData(lawdCd, fromDate, toDate)
                 .stream()
                 .map(AptTradeMapItem::new)
                 .collect(Collectors.toList());
     }
 
-    // 아파트 이름 + 거래년월로 DB 전체 검색
+    // 아파트 이름 + 거래 기간 범위로 DB 전체 검색
+    // aptNm : 아파트 이름 (부분 일치)
+    // from : 시작 거래년월 6자리
+    // to : 종료 거래년월 6자리
     @GetMapping("/search")
     public List<AptTradeMapItem> searchByAptNm(
             @RequestParam String aptNm,
-            @RequestParam String dealYearMon
+            @RequestParam String from,
+            @RequestParam String to
     ) {
-        // "202503" → 2025년 3월 1일 ~ 3월 31일
-        int year  = Integer.parseInt(dealYearMon.substring(0, 4));
-        int month = Integer.parseInt(dealYearMon.substring(4, 6));
-        LocalDate from = LocalDate.of(year, month, 1);
-        LocalDate to   = from.withDayOfMonth(from.lengthOfMonth());
+        // "202501" → 2025년 1월 1일, "202503" → 2025년 3월 31일
+        LocalDate fromDate = parseYearMonToFirstDay(from);
+        LocalDate toDate   = parseYearMonToLastDay(to);
 
         return apartTradeRepository
-                .searchByAptNm(aptNm, from, to)
+                .searchByAptNm(aptNm, fromDate, toDate)
                 .stream()
                 .map(AptTradeMapItem::new)
                 .collect(Collectors.toList());
+    }
+
+    // 해당 월 1일
+    private LocalDate parseYearMonToFirstDay(String yearMon) {
+        int year  = Integer.parseInt(yearMon.substring(0, 4));
+        int month = Integer.parseInt(yearMon.substring(4, 6));
+        return LocalDate.of(year, month, 1);
+    }
+
+    // 해당 월 마지막 날
+    private LocalDate parseYearMonToLastDay(String yearMon) {
+        LocalDate first = parseYearMonToFirstDay(yearMon);
+        return first.withDayOfMonth(first.lengthOfMonth());
     }
 }
